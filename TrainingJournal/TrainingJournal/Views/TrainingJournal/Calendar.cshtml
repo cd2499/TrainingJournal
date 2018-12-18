@@ -1,0 +1,14 @@
+﻿@using TrainingJournal.DTO
+@model TrainingJournal.Models.JournalCalendarModel
+
+@{
+    ViewData["Title"] = "TrainingJournalCalendar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h2>TrainingJournalCalendar</h2>
+
+<div class="training-journal-container">
+    @Html.Partial("_Calendar")
+</div>

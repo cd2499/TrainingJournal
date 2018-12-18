@@ -1,0 +1,49 @@
+﻿
+@using TrainingJournal.DTO
+@model TrainingJournal.Models.JournalCalendarModel
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+
+*@
+
+
+
+<div class="calendar-container" id="calendar-container">
+    @Html.Hidden("prev-month", Model.CalendarDays[0].CalendarDate.AddDays(-1).ToString("yyyy-MM"))
+    @Html.Hidden("next-month", Model.CalendarDays[Model.CalendarDays.Count() - 1].CalendarDate.AddDays(+1).ToString("yyyy-MM"))
+    <div class="month">
+        <ul>
+            <li class="prev" id="prev-month-btn">&#10094;</li>
+            <li class="next" id="next-month-btn">&#10095;</li>
+            <li>@Model.CalendarMonth<br><span style="font-size:18px">@Model.CalendarYear</span></li>
+        </ul>
+    </div>
+
+    <ul class="weekdays">
+        <li>Su</li>
+        <li>Mo</li>
+        <li>Tu</li>
+        <li>We</li>
+        <li>Th</li>
+        <li>Fr</li>
+        <li>Sa</li>
+
+    </ul>
+
+    <ul class="days">
+
+        @foreach (var day in @Model.CalendarDays)
+        {
+            <li class="@(day.TrainingLogId != -1? "trained" : null )" data-training-log-id="@day.TrainingLogId" data-calendar-date-id="@day.CalendarDateStr">
+                <span class="@(day.IsToday? "active" : null)">@day.CalendarDate.Day.ToString()</span>
+                <ul>
+                    <li> @(string.IsNullOrEmpty(day.ExcerciseGroup) ? " " : day.ExcerciseGroup)</li>
+                </ul>
+            </li>
+
+        }
+    </ul>
+
+</div>
+
+

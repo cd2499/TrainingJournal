@@ -1,0 +1,101 @@
+﻿@using TrainingJournal.DTO
+@model TrainingJournal.Models.JournalEntryModel
+@{
+    ViewBag.Title = "Journal Entry";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@*@if (Model.Exercises.Count > 0)*@
+@if(Model == null)
+{
+    <h4>No entry for this date. Create new entry now?</h4>
+    <!--- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#new-entry-modal" id="create-entry-btn">Yes</button>
+    <button type="button" class="btn btn-primary" id="cancel-entry-btn">Back</button>
+
+    <!-- Create New Entry Modal -->
+    <div class="modal fade" id="new-entry-modal" tabindex="-1" role="dialog" aria-labelledby="new-entry-modal-label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="new-entry-modal-label">Create New Entry</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <select name="exercise-group" id="exercise-group-select">
+                        <option value="1">Back</option>
+                        <option value="2">Chest</option>
+                        <option value="3">Legs</option>
+                        <option value="4">Shoulders</option>
+                        <option value="5">Spin Class</option>
+                        <option value="6">Arms</option>
+                    </select>
+
+                    <select name="training-location" id="training-location-select">
+                        <option value="LATroy">LA - Troy</option>
+                        <option value="LAWarren">LA - Warren</option>
+                        <option value="UWMPont">UWM - Pontiac</option>
+                        <option value="UWMTroy">UWM - Troy</option>
+                    </select>
+                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="submit-entry-btn">Crea\te Entry</button>
+            </div>
+        </div>
+      </div>
+    </div>
+}
+else
+{   <h2>Journal Entry @(Model.TrainingDateTime)  @@ @(Model.LocationShortDesc)</h2>
+    @Request.Params["calendarDate"]
+    using (Ajax.BeginForm("JournalEntry", "TrainingJournal", new {calendarDate = @Request.Params["calendarDate"]}, new AjaxOptions { HttpMethod = "POST", OnBegin = "showAjaxLoader" }))
+    {
+        @Html.HiddenFor(m => m.TrainingLogId)
+        @Html.HiddenFor(m => m.TrainingDateTime)
+        @Html.HiddenFor(m => m.LocationShortDesc)
+        @Html.HiddenFor(m => m.GroupShortDesc)
+        <table>
+            @for(int i = 0; i < Model.Exercises.Count(); i++)
+            {
+                <tr>
+                    <td>
+                        @Html.HiddenFor(m => m.Exercises[i].ExerciseEntryOrder)
+                        @Html.HiddenFor(m => m.Exercises[i].ExerciseName)
+                        @Html.DisplayFor(m => m.Exercises[i].ExerciseName)
+                        @Html.HiddenFor(m => m.Exercises[i].ExerciseId)
+
+                        @for(int j = 0; j < Model.Exercises[i].ExerciseSetsDetail.Count(); j++)
+                        {
+                            <tr data-exc-idx="@j">
+                                <td>
+                                    @Html.DisplayFor(m => m.Exercises[i].ExerciseSetsDetail[j].ExerciseSetOrder)
+                                </td>
+                                <td>
+                                    @Html.EditorFor(m => m.Exercises[i].ExerciseSetsDetail[j].WeightResistence)
+                                </td>
+                                <td>
+                                    @Html.EditorFor(m => m.Exercises[i].ExerciseSetsDetail[j].Repetitions)
+                                </td>
+                                <td>
+                                    @Html.EditorFor(m => m.Exercises[i].ExerciseSetsDetail[j].Comments)
+                                </td>
+                            </tr>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button type="button" class="btn btn-primary add-row" data-exc-set="@i" id="add-row-btn-@i">add</button>
+                        <button type="button" class="btn btn-primary remove-tier">delete</button>
+                    </td>
+                </tr>
+            }
+        </table>
+        <button type="submit" class="btn btn-primary pull-right">save</button>
+    }
+}
+
